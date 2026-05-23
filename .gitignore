@@ -1,0 +1,39 @@
+# Secrets & credentials
+*.env
+.env.*
+secrets/
+credentials/
+*-key.json
+*-credentials.json
+
+# Config files with secrets (use templates in config/templates/ instead)
+openclaw.json
+litellm-config.yaml
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Temp
+tmp/
+temp/
+*.tmp
+
+# Compiled / build artifacts
+dist/
+build/
+node_modules/
+__pycache__/
+*.pyc

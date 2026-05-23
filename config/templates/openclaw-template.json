@@ -1,0 +1,149 @@
+{
+  "_comment": "OpenClaw configuration template — replace ALL placeholder values before use",
+  "agents": {
+    "list": [
+      {
+        "id": "main",
+        "workspace": "D:\\KI-CORE\\apps\\openclaw\\workspace",
+        "model": {
+          "primary": "ollama/jarvis",
+          "fallbacks": [
+            "ollama/qwen3:8b",
+            "ollama/gemma3:12b",
+            "anthropic/claude-sonnet-4-6"
+          ]
+        }
+      },
+      {
+        "id": "nexus",
+        "workspace": "D:\\KI-CORE\\apps\\openclaw\\workspace-nexus",
+        "model": {
+          "primary": "ollama-3060/nexus",
+          "fallbacks": [
+            "ollama/qwen2.5-coder:7b"
+          ]
+        }
+      },
+      {
+        "id": "clio",
+        "workspace": "D:\\KI-CORE\\apps\\openclaw\\workspace-clio",
+        "model": {
+          "primary": "claude-cli/claude-opus-4-7"
+        }
+      }
+    ],
+    "defaults": {
+      "workspace": "D:\\KI-CORE\\apps\\openclaw\\workspace",
+      "timeoutSeconds": 600,
+      "compaction": {
+        "reserveTokensFloor": 1000,
+        "reserveTokens": 1000
+      },
+      "model": {
+        "primary": "ollama/jarvis",
+        "fallbacks": [
+          "ollama/gemma3:12b",
+          "ollama/qwen3:8b",
+          "anthropic/claude-sonnet-4-6"
+        ]
+      },
+      "cliBackends": {
+        "claude-cli": {
+          "command": "C:\\Users\\<USERNAME>\\.local\\bin\\claude.exe"
+        }
+      }
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "bind": "0.0.0.0",
+    "auth": {
+      "password": "<REPLACE_WITH_STRONG_PASSWORD>"
+    },
+    "allowedOrigins": [
+      "192.168.0.0/24"
+    ]
+  },
+  "models": {
+    "providers": {
+      "ollama": {
+        "baseUrl": "http://127.0.0.1:11434",
+        "api": "ollama",
+        "apiKey": "OLLAMA_API_KEY",
+        "models": [
+          {
+            "id": "jarvis",
+            "name": "Jarvis (qwen3:14b)",
+            "contextWindow": 65536,
+            "maxTokens": 8192,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0 }
+          },
+          {
+            "id": "qwen3:8b",
+            "name": "qwen3:8b",
+            "contextWindow": 32768,
+            "maxTokens": 8192,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0 }
+          },
+          {
+            "id": "qwen3:14b",
+            "name": "qwen3:14b",
+            "contextWindow": 65536,
+            "maxTokens": 8192,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0 }
+          },
+          {
+            "id": "gemma3:12b",
+            "name": "gemma3:12b",
+            "contextWindow": 32768,
+            "maxTokens": 8192,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0 }
+          }
+        ]
+      },
+      "ollama-3060": {
+        "baseUrl": "http://127.0.0.1:11435",
+        "api": "ollama",
+        "apiKey": "OLLAMA_API_KEY",
+        "_comment": "Second Ollama instance for RTX 3060 — run with CUDA_VISIBLE_DEVICES=<3060-index>",
+        "models": [
+          {
+            "id": "nexus",
+            "name": "Nexus (qwen2.5-coder:7b on RTX 3060)",
+            "contextWindow": 32768,
+            "maxTokens": 8192,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0 }
+          },
+          {
+            "id": "qwen2.5-coder:7b",
+            "name": "qwen2.5-coder:7b",
+            "contextWindow": 32768,
+            "maxTokens": 8192,
+            "input": ["text"],
+            "cost": { "input": 0, "output": 0 }
+          }
+        ]
+      },
+      "anthropic": {
+        "apiKey": "<ANTHROPIC_API_KEY>",
+        "models": [
+          {
+            "id": "claude-opus-4-7",
+            "contextWindow": 200000,
+            "maxTokens": 32768
+          },
+          {
+            "id": "claude-sonnet-4-6",
+            "contextWindow": 200000,
+            "maxTokens": 16000
+          }
+        ]
+      }
+    }
+  }
+}

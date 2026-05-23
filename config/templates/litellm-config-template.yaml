@@ -1,0 +1,58 @@
+# LiteLLM Configuration Template for KI-CORE
+# Replace all <PLACEHOLDER> values before use
+# Docs: https://docs.litellm.ai/docs/proxy/configs
+
+model_list:
+  # Local Ollama - RTX 5060 Ti
+  - model_name: jarvis
+    litellm_params:
+      model: ollama/jarvis
+      api_base: http://host.docker.internal:11434
+
+  - model_name: qwen3-14b
+    litellm_params:
+      model: ollama/qwen3:14b
+      api_base: http://host.docker.internal:11434
+
+  - model_name: qwen3-8b
+    litellm_params:
+      model: ollama/qwen3:8b
+      api_base: http://host.docker.internal:11434
+
+  # Local Ollama - RTX 3060 (second instance)
+  - model_name: nexus
+    litellm_params:
+      model: ollama/nexus
+      api_base: http://host.docker.internal:11435
+
+  - model_name: nexus-coder
+    litellm_params:
+      model: ollama/qwen2.5-coder:7b
+      api_base: http://host.docker.internal:11435
+
+  # Cloud Models
+  - model_name: claude-opus-4-7
+    litellm_params:
+      model: claude-opus-4-7
+      api_key: "<ANTHROPIC_API_KEY>"
+
+  - model_name: claude-sonnet-4-6
+    litellm_params:
+      model: claude-sonnet-4-6
+      api_key: "<ANTHROPIC_API_KEY>"
+
+  - model_name: gpt-5-4
+    litellm_params:
+      model: gpt-5.4
+      api_key: "<OPENAI_API_KEY>"
+
+general_settings:
+  master_key: "<REPLACE_WITH_LITELLM_MASTER_KEY>"
+  database_url: "postgresql://kicore:<DB_PASSWORD>@postgres:5432/kicore"
+
+litellm_settings:
+  cache: True
+  cache_params:
+    type: redis
+    host: redis
+    port: 6379
