@@ -80,7 +80,7 @@ Secondary AI node, primarily used for ClaudeBot (high-context reasoning).
 
 ---
 
-## CyberNode (192.168.0.63)
+## CyberNode (192.168.0.99)
 
 Lightweight workstation for local shell tasks and Claude Code.
 

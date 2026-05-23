@@ -26,7 +26,7 @@ Internet
 | AI-Core | 192.168.0.14 | AI-CORE | Static/DHCP reservation |
 | NAS | 192.168.0.5 | — | TrueNAS, static |
 | Gaming Node | 192.168.0.21 | — | Static/DHCP reservation |
-| CyberNode | 192.168.0.63 | — | Static/DHCP reservation |
+| CyberNode | 192.168.0.99 | — | Static/DHCP reservation |
 | Proxmox Host | — | — | Internal, manages AI-Core VM |
 
 ---
@@ -137,5 +137,5 @@ Nodes are referenced by IP in all configs. Optional: set up local DNS or `/etc/h
 192.168.0.14  ai-core ai-core.local
 192.168.0.5   nas nas.local
 192.168.0.21  gaming-node
-192.168.0.63  cybernode
+192.168.0.99  cybernode
 ```

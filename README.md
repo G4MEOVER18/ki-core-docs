@@ -1,83 +1,110 @@
-﻿```markdown
-# ki-core  
-**Distributed Self-Hosted AI Infrastructure for Home/Office LANs**
+# ki-core
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)  
-[![Platform](https://img.shields.io/badge/Platform-Linux-orange.svg)](https://github.com/yourusername/ki-core)  
-[![Agents](https://img.shields.io/badge/Agents-5-green.svg)](https://github.com/yourusername/ki-core)  
-[![GPUs](https://img.shields.io/badge/GPUs-2%20RTX-blue.svg)](https://github.com/yourusername/ki-core)
+**Distributed Self-Hosted AI Infrastructure**
 
----
-
-### Overview  
-ki-core is a multi-node distributed AI infrastructure designed for home/office LAN environments. It leverages a Proxmox-based AI-Core, GPU-accelerated gaming nodes, and CPU-focused workstations to run five specialized AI agents (Jarvis, Nexus, Clio, ClaudeBot, Claude Code) alongside a TrueNAS storage backbone. The system integrates Docker services, dual Ollama instances, and an OpenClaw gateway for seamless agent routing and resource management.
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2011-blue.svg)](docs/03-ai-core.md)
+[![Agents](https://img.shields.io/badge/Agents-5-green.svg)](docs/09-agents.md)
+[![GPUs](https://img.shields.io/badge/GPUs-RTX%205060Ti%20%2B%203060%20%2B%203080-76b900.svg)](docs/02-hardware.md)
 
 ---
 
-### Architecture Diagram  
+## Overview
+
+KI-CORE is a multi-node distributed AI infrastructure for home/office LAN environments. A Proxmox-based AI-Core server with dual GPUs runs the primary agent stack (Jarvis, Nexus, Clio), a gaming workstation hosts ClaudeBot for long-context tasks, and a CPU workstation (CyberNode) handles Claude Code sessions, git workflows, and GitHub publishing. All nodes share storage and communicate via a file-based protocol on a TrueNAS NAS.
+
 ```
-+----------------+       +----------------+       +----------------+
-|   AI-Core      |<----->|  Gaming Node   |<----->|   CyberNode    |
-| (Proxmox VM)   |       | (RTX 3080)     |       | (CPU-only)     |
-+----------------+       +----------------+       +----------------+
-        |                           |                           |
-        v                           v                           v
-+----------------+       +----------------+       +----------------+
-|     NAS        |<----->|  Docker Services |<----->|  OpenClaw Gateway |
-| (TrueNAS)      |       | (Open-WebUI, etc) |       | (Agent Routing)  |
-+----------------+       +----------------+       +----------------+
++─────────────────+     +─────────────────+     +─────────────────+
+│    AI-Core      │────▶│   Gaming Node   │     │   CyberNode     │
+│  192.168.0.14   │     │  192.168.0.21   │     │  192.168.0.99   │
+│  Proxmox VM     │     │  RTX 3080       │     │  Intel NUC      │
+│  RTX 5060Ti+3060│     │  ClaudeBot      │     │  Claude Code    │
++─────────────────+     +─────────────────+     +─────────────────+
+         │                       │                       │
+         └───────────────────────┴───────────────────────┘
+                                 │
+                    +────────────▼────────────+
+                    │          NAS            │
+                    │      192.168.0.5        │
+                    │  TrueNAS / Ki-Daten     │
+                    +─────────────────────────+
 ```
 
 ---
 
-### Key Features  
-- **Auto-recovery** with 5-minute watchdog for node stability  
-- **Session management** and persistent memory system across agents  
-- **VRAM warmup** optimization for GPU workloads  
-- **NAS chat protocol** for inter-node communication and storage  
-- **Elevated runner** for secure admin task execution  
-- Dual **Ollama instances** (RTX 5060 Ti + RTX 3060) with GPU passthrough  
-- **OpenClaw gateway** for dynamic agent routing and load balancing  
+## Key Features
+
+- **Dual Ollama instances** — RTX 5060 Ti (:11434) + RTX 3060 (:11435) für parallele Inferenz
+- **OpenClaw Gateway** — Multi-Agent-Routing, Session-Management, Fallback-Chains
+- **5 spezialisierte Agenten** — Jarvis (Koordinator), Nexus (Code), Clio (Premium), ClaudeBot (langer Kontext), Claude Code (Shell/Git)
+- **Docker-Stack** — Open-WebUI, LiteLLM, ComfyUI, SearXNG, Portainer, Watchtower
+- **NAS Chat-Protokoll** — dateibasierte Inter-Node-Kommunikation über SMB-Share
+- **Auto-Recovery** — Windows Task Scheduler überwacht Gateway alle 5 Minuten
+- **Persistentes Memory-System** — SOUL.md, MEMORY.md, tägliche Logs, Dream-Processing
 
 ---
 
-### Node Overview  
-| Node Name   | Role                  | Hardware                                      | Notes                                  |
-|-------------|-----------------------|-----------------------------------------------|----------------------------------------|
-| AI-Core     | Main Server           | Intel Xeon E5-2699 v3, 128GB RAM, RTX 5060 Ti + RTX 3060 | Proxmox VM with GPU passthrough        |
-| Gaming Node | Secondary Inference   | RTX 3080                                      | ClaudeBot agent, gaming workload       |
-| CyberNode   | CPU-Only Workstation  | CPU-focused (no GPU)                          | Claude Code agent, code generation     |
-| NAS         | Storage & Networking  | TrueNAS                                       | Shared storage, inter-node communication |
+## Node Overview
+
+| Node | IP | Rolle | Hardware |
+|------|----|-------|----------|
+| **AI-Core** | 192.168.0.14 | Primärer Inferenz-Server | Xeon E5-2699 v3, 128 GB RAM, RTX 5060 Ti + RTX 3060, Proxmox VM |
+| **Gaming Node** | 192.168.0.21 | Sekundäre Inferenz, langer Kontext | RTX 3080, Windows 11 |
+| **CyberNode** | 192.168.0.99 | Shell-Tasks, Git, GitHub-Publishing | Intel NUC, Windows 11 Pro |
+| **NAS** | 192.168.0.5 | Shared Storage, Inter-Node-Chat | TrueNAS SCALE |
 
 ---
 
-### Quick Start  
-1. **Install OpenClaw**  
-   ```bash
-   git clone https://github.com/yourusername/ki-core.git
-   cd ki-core
-   docker-compose up -d
-   ```
+## Quick Start
 
-2. **Configure Nodes**  
-   Edit `config.yaml` to define agent roles, GPU allocation, and NAS paths.
+```powershell
+# 1. OpenClaw installieren (Node.js 18+ vorausgesetzt)
+npm install -g openclaw
 
-3. **Start OpenClaw Gateway**  
-   ```bash
-   ./openclaw start --watchdog 300
-   ```
+# 2. Config aus Template kopieren und anpassen
+cp config/templates/openclaw-template.json C:\Users\<USER>\.openclaw\openclaw.json
+# → Placeholders ersetzen: <REPLACE_WITH_STRONG_PASSWORD>, <ANTHROPIC_API_KEY>
 
----
+# 3. Gateway starten
+openclaw gateway start
 
-### Documentation  
-- [Architecture Details](docs/architecture.md)  
-- [Configuration Guide](docs/configuration.md)  
-- [Agent Setup](docs/agents.md)  
-- [Troubleshooting](docs/troubleshooting.md)  
-
----
-
-### License & Contributing  
-This project is licensed under the **MIT License** – see [LICENSE](LICENSE) for details.  
-Contributions are welcome! Please open an issue or submit a pull request via GitHub.  
+# 4. Agent testen
+openclaw agent --agent main --message "Hallo, bist du aktiv?" --json
 ```
+
+---
+
+## Documentation
+
+| Dokument | Inhalt |
+|----------|--------|
+| [01 — Architektur](docs/01-architecture.md) | System-Übersicht, Netzwerk-Topologie, Datenfluss |
+| [02 — Hardware](docs/02-hardware.md) | Alle Nodes mit CPU/GPU/RAM-Specs |
+| [03 — AI-Core](docs/03-ai-core.md) | Proxmox VM, Ollama, Docker, Verzeichnisstruktur |
+| [04 — Gaming Node](docs/04-gaming-node.md) | ClaudeBot, Ollama, Modelle |
+| [05 — CyberNode](docs/05-cybernode.md) | Claude Code, NAS-Anbindung, Git-Workflows |
+| [06 — Proxmox](docs/06-proxmox.md) | GPU-Passthrough, VM-Konfiguration, Backups |
+| [07 — NAS](docs/07-nas.md) | TrueNAS, SMB, Chat-Protokoll, Backup-Jobs |
+| [08 — Services](docs/08-services.md) | Docker-Stack, alle Container |
+| [09 — Agenten](docs/09-agents.md) | Alle 5 Agenten, Modelle, Startup-Sequenz |
+| [10 — Netzwerk](docs/10-networking.md) | Port-Map, Firewall-Regeln, DNS |
+| [11 — Setup-Guide](docs/11-setup-guide.md) | Schritt-für-Schritt Nachbau |
+| [12 — Known Issues](docs/12-known-issues.md) | Offene Probleme, Workarounds |
+
+---
+
+## Config Templates
+
+Fertige Templates mit `<PLACEHOLDER>`-Syntax — nie echte Keys eintragen:
+
+- [`config/templates/openclaw-template.json`](config/templates/openclaw-template.json)
+- [`config/templates/litellm-config-template.yaml`](config/templates/litellm-config-template.yaml)
+- [`config/templates/docker-compose-template.yml`](config/templates/docker-compose-template.yml)
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE)
+
+© 2026 G4MEOVER18

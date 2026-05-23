@@ -44,7 +44,7 @@ This document tracks unresolved issues, limitations, and areas under active deve
 ### 4. CyberNode TrueNAS Sync Pending
 
 **Status:** Not yet configured  
-**Symptom:** CyberNode (192.168.0.63) has not been added to the TrueNAS sync pipeline.  
+**Symptom:** CyberNode (192.168.0.99) has not been added to the TrueNAS sync pipeline.  
 **Impact:** CyberNode data is not backed up to NAS; NAS chat channel not accessible from CyberNode.  
 **Fix needed:** Mount `\\192.168.0.5\Ki-Daten` as K: drive on CyberNode, configure sync task.
 

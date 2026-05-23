@@ -1,93 +1,108 @@
 # CyberNode
 
-Local coding and shell workstation, used primarily for Claude Code sessions.
+Lokale Workstation für Claude Code Sessions, Git-Workflows und GitHub-Publishing.
 
 ---
 
-## Overview
+## Übersicht
 
-| Property | Value |
-|----------|-------|
-| **IP Address** | 192.168.0.63 |
-| **GPU** | None (CPU-based inference only) |
-| **Primary Agent** | Claude Code (claude-sonnet-4-6) |
-| **Role** | File operations, git workflows, shell scripts, local builds |
+| Eigenschaft | Wert |
+|-------------|------|
+| **Hostname** | CYBER-NODE-NUC |
+| **IP-Adresse** | 192.168.0.99 (zweite NIC: 192.168.0.73) |
+| **OS** | Windows 11 Pro |
+| **Formfaktor** | Intel NUC |
+| **GPU** | Keine (CPU-basiert) |
+| **Primär-Agent** | Claude Code (claude-sonnet-4-6) |
+| **NAS-Mount** | K:\ (`\192.168.0.5\Ki-Daten`) ✅ aktiv |
+| **Rolle** | Dateioperationen, Git, Shell-Skripte, GitHub-Publishing |
 
 ---
 
 ## Agent: Claude Code
 
-Claude Code runs as a CLI tool on CyberNode with full filesystem access.
+Claude Code läuft als CLI-Tool auf CyberNode mit vollständigem Dateisystem-Zugriff.
 
-- **Model:** claude-sonnet-4-6 (via Claude.ai OAuth subscription — no API key needed)
-- **Workspace:** Local filesystem
-- **Key capabilities:**
-  - Read/write files directly
-  - Run shell commands (PowerShell/Bash)
-  - Git operations
-  - Spawn background tasks and monitor output
-  - Elevated runner pattern (via NAS + shared task system)
+- **Modell:** claude-sonnet-4-6 (via Claude.ai OAuth — kein API-Key nötig)
+- **Workspace:** Lokales Dateisystem
+- **Kernfähigkeiten:**
+  - Dateien direkt lesen/schreiben
+  - Shell-Befehle ausführen (PowerShell/Bash)
+  - Git-Operationen und GitHub-Publishing via `gh` CLI
+  - Hintergrundaufgaben starten und überwachen
+  - NAS Chat-Protokoll lesen/schreiben
 
 ### CLAUDE.md
 
-The CyberNode's Claude Code instance reads from `CLAUDE.md` in the workspace root. Key rules:
-- Always respond in German
-- Project files go under `D:\KI-CORE\projects\<kategorie>\<projektname>`
-- Prefer Ollama (local models) for heavy work, Claude API for tool-use tasks
-- All AI agent API traffic goes through AI-Core's LiteLLM/OpenClaw gateway
+Die Claude Code Instanz liest `CLAUDE.md` im Workspace-Root. Wichtige Regeln:
+- Immer auf Deutsch antworten
+- Projektdateien unter `D:\Projekte\<kategorie>\<projektname>`
+- Proaktiv handeln — nicht fragen ob etwas getan werden soll
 
 ---
 
-## Connectivity
+## NAS-Anbindung
 
-### NAS Integration (Pending)
+### Status: Aktiv ✅
 
-CyberNode has not yet been connected to the TrueNAS share. **TODO:**
+K: Drive ist persistent gemountet und wird aktiv genutzt:
 
-```powershell
-# Mount NAS share persistently
-net use K: \\192.168.0.5\Ki-Daten /persistent:yes
-
-# Verify chat channel
-Test-Path "K:\KI-CORE\chat\from-cybernode\"
+```
+\192.168.0.5\Ki-Daten  →  K:\
 ```
 
-Once mounted:
-- **Write to:** `K:\KI-CORE\chat\from-cybernode\`
-- **Read from:** `K:\KI-CORE\chat\from-ai-core\`, `K:\KI-CORE\chat\from-gaming-node\`
+- **Schreiben:** `K:\KI-CORE\chat\from-cybernode\`
+- **Lesen:** `K:\KI-CORE\chat\from-ai-core\`, `K:\KI-CORE\chat\from-gamingnode\`
 
-### Direct Access to AI-Core
+NAS-Chat ist vollständig eingerichtet und operativ.
 
-Claude Code on CyberNode can reach AI-Core services directly:
+### Direktzugriff auf AI-Core Services
+
+Claude Code auf CyberNode kann AI-Core Services direkt erreichen:
 
 ```
 OpenClaw Gateway: http://192.168.0.14:18789
 LiteLLM API:      http://192.168.0.14:4000
 Open-WebUI:       http://192.168.0.14:3000
+Ollama (5060Ti):  http://192.168.0.14:11434
+Ollama (3060):    http://192.168.0.14:11435
 ```
 
 ---
 
-## Repo Publishing
+## Rolle: GitHub-Publishing Node
 
-CyberNode is designated as the **git/GitHub publishing node** — it handles:
-- Reviewing documentation repos pushed from AI-Core
-- Running `git push` to GitHub
-- Code review before publishing
+CyberNode ist der **git/GitHub Publishing Node** des Netzwerks:
+- Repos von AI-Core via NAS empfangen
+- Inhalte prüfen, Secrets entfernen, Lücken füllen
+- Via `gh` CLI nach GitHub pushen
 
-### Workflow for Receiving Repos from AI-Core
+### Workflow
 
-1. AI-Core writes a NAS chat message with the repo path
-2. CyberNode Claude Code reads the message from `K:\KI-CORE\chat\from-ai-core\`
-3. CyberNode reviews, adjusts, then pushes to GitHub via `gh` CLI
+1. AI-Core schreibt NAS-Nachricht mit Repo-Pfad nach `from-ai-core\`
+2. CyberNode liest die Nachricht, prüft Inhalt
+3. CyberNode korrigiert, ergänzt und pusht via `gh repo create` + `git push`
+4. Nachricht auf `STATUS: DONE` setzen
 
 ---
 
-## Environment
+## Umgebungsvariablen
 
-| Variable | Value |
-|----------|-------|
-| `KI_CORE_HOME` | `D:\KI-CORE` |
+| Variable | Wert |
+|----------|------|
+| `CYBER_NODE_HOME` | `D:\KI-CORE` |
 | `NPM_CONFIG_CACHE` | `D:\KI-CORE\cache\npm` |
 | `PIP_CACHE_DIR` | `D:\KI-CORE\cache\pip` |
-| `HF_HOME` | `D:\KI-CORE\cache\huggingface` |
+
+---
+
+## Installierte Tools
+
+| Tool | Zweck |
+|------|-------|
+| Claude Code (claude-cli) | Primärer AI-Agent |
+| Git + GitHub CLI (`gh`) | Versionskontrolle + GitHub-Publishing |
+| PlatformIO | Embedded-Firmware-Builds (STM32, ESP32) |
+| Python 3.x | Security-Tool-Entwicklung |
+| Node.js | OpenClaw-kompatible Tools |
+| PuTTY / plink | SSH zu AI-Core und KI-Core Nodes |

@@ -12,7 +12,7 @@ KI-CORE runs multiple AI agents, each with a distinct role, model, and personali
 | **Nexus** | AI-Core | 192.168.0.14 | qwen2.5-coder:7b | RTX 3060 | Code specialist |
 | **Clio** | AI-Core | 192.168.0.14 | claude-opus-4-7 | Cloud | Premium reasoning |
 | **ClaudeBot** | Gaming Node | 192.168.0.21 | claude-sonnet-4-6 | Cloud | High-context tasks |
-| **Claude Code** | CyberNode | 192.168.0.63 | claude-sonnet-4-6 | Cloud | Shell/file operations |
+| **Claude Code** | CyberNode | 192.168.0.99 | claude-sonnet-4-6 | Cloud | Shell/file operations |
 
 ---
 
@@ -103,7 +103,7 @@ Handles tasks that need a very large context window. Communicates with AI-Core v
 
 ## Claude Code — CyberNode
 
-**Node:** CyberNode (192.168.0.63)  
+**Node:** CyberNode (192.168.0.99)  
 **Model:** claude-sonnet-4-6
 
 Runs as the Claude Code CLI tool. Primary capabilities:
