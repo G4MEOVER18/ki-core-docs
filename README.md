@@ -108,3 +108,9 @@ Fertige Templates mit `<PLACEHOLDER>`-Syntax — nie echte Keys eintragen:
 MIT — see [LICENSE](LICENSE)
 
 © 2026 G4MEOVER18
+
+---
+
+## Kontakt
+
+**Entwickler:** Yanis Ameseder · **E-Mail:** [g4me.over.18@gmail.com](mailto:g4me.over.18@gmail.com)
